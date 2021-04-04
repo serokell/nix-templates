@@ -1,0 +1,7 @@
+.envrc
+.terraform/
+result*
+.tmp
+terraform.tfstate*
+out/
+err/

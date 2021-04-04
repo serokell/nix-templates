@@ -1,0 +1,7 @@
+steps:
+  - label: Check Nix flake
+    commands:
+      - nix-shell --run 'nix flake check -L'
+  - label: Check Terraform
+    commands:
+      - nix-shell --run 'cd terraform && terraform init -backend=false && terraform validate'
