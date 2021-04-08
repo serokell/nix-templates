@@ -15,6 +15,11 @@
         description = "Cargo crate built with crate2nix";
       };
 
+      python-poetry2nix = {
+        path = ./python-poetry2nix;
+        description = "Python project built with poetry2nix";
+      };
+
       infra = {
         path = ./infra;
         description = "An infrastructure repository";
