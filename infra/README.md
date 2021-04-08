@@ -1,10 +1,14 @@
-# ♊ Gemini: Internal Services Cluster
+<!-- # Constellation: Cluster Usage -->
 
-![Gemini Constellation](https://upload.wikimedia.org/wikipedia/commons/d/d1/GeminiCC.jpg)
+<!-- 
+Put a constellation image here, from https://www.allthesky.com/constellations/visualconstellations.html
+
+Don't forget to add image credit:
 
 _Image credit: Till Credner, CC BY-SA 3.0_
+-->
 
-Serokell's internal services.
+<!-- Cluster description -->
 
 All AWS resources are managed by Terraform. Machine configuration is managed
 with Nix, and all machines run NixOS.
@@ -37,9 +41,8 @@ All necessary programs and dependencies are provided by Nix in `nix-shell` or `n
 
 | Name    | Function       | IP |
 |:-------:|:--------------:|:--:|
-| Mekbuda | MTProxy server |    |
 
-<!-- Don't forget to add the servers on https://www.notion.so/serokell/Server-Naming-Scheme-c189819000164fb090377c75e4ce7da6 -->
+<!-- Put servers, their function and IP (if applicable) in this table) -->
 
 ## Deployment
 
