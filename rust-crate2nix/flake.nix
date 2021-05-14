@@ -17,10 +17,11 @@
         inherit (import "${crate2nix}/tools.nix" { inherit pkgs; })
           generatedCargoNix;
 
-        project = pkgs.callPackage (generatedCargoNix {
+        project = import (generatedCargoNix {
           name = crateName;
           src = ./.;
         }) {
+          inherit pkgs;
           defaultCrateOverrides = pkgs.defaultCrateOverrides // {
             # Crate dependency overrides go here
           };
