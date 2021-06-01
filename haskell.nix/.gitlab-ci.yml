@@ -1,0 +1,35 @@
+default:
+  # specify nix tag to select runner
+  tags: [nix]
+
+stages:
+  - build
+  - test
+
+# build haskell components
+build-all:
+  stage: build
+  script:
+  - nix-build -A checks.x86_64-linux.build-all
+
+# run the tests
+test:
+  stage: test
+  script:
+  - nix-build -A checks.x86_64-linux.test
+
+# run hlint
+##hlint:
+##  stage: test
+##  script:
+##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hlint
+##      -c hlint --hint .hlint.yaml */
+
+# run weeder
+##weeder:
+##  stage: test
+##  script:
+##  - nix-build -A weeder-script
+##    # weeder needs .cabal file:
+##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hpack -c hpack
+##  - ./result
