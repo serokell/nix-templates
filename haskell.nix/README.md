@@ -2,7 +2,7 @@ Template for haskell.nix configuration for Buildkite or Gitlab CI
 
 ## How to use this template
 
-1. Copy `flake.nix` file to you repository, it contains all nix dependencies and definitions.
+1. Copy `flake.nix` file to you repository, it contains all nix dependencies and definitions. Or you can use `nix flake` to copy the whole template: `nix flake init -t github:serokell/templates#haskell-nix`.
 
 2. Copy `default.nix` and `shell.nix` files which provide compatibility with non-flake nix interface.
 
