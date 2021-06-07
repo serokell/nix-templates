@@ -48,7 +48,7 @@
             ghcOptions = [
               # fail on warnings
               "-Werror"
-              # disable optimisations to speed up builds
+              # disable optimisations, we don't need them if we don't package or deploy the executable
               "-O0"
 
               # for weeder: produce *.dump-hi files
