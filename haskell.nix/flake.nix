@@ -25,16 +25,13 @@
   };
 
   outputs =
-    { self, nixpkgs, haskell-nix, hackage-nix, stackage-nix, flake-utils, ... }:
-    ## for weeder:
-    # { self, nixpkgs, haskell-nix, hackage-nix, stackage-nix, flake-utils, haskell-nix-weeder, ... }:
+    { self, nixpkgs, haskell-nix, hackage-nix, stackage-nix, flake-utils, ... }@args:
 
     # If you want to support systems other than x86_64-linux, add them here
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
-        # name = "your-package-name";
-        name = "xrefcheck";
+        name = throw "Put your package name here";
 
         haskellNixOverlays = haskell-nix.internal.overlaysOverrideable {
           sourcesOverride = haskell-nix.internal.sources // {
@@ -94,7 +91,7 @@
         hs-checks = nixpkgs.lib.filterAttrs (_: nixpkgs.lib.isDerivation) hs-pkg.checks;
 
         ## for weeder:
-        #weeder-hacks = import haskell-nix-weeder { inherit pkgs; };
+        #weeder-hacks = import args.haskell-nix-weeder { inherit pkgs; };
 
         ## nixpkgs has weeder 2, but we use weeder 1
         #weeder-legacy = pkgs.haskellPackages.callHackageDirect {
