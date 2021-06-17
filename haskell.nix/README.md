@@ -8,7 +8,7 @@ Template for haskell.nix configuration for Buildkite or Gitlab CI
 
 3. Copy pipeline configuration: `.gitlab-ci.yml` for Gitlab, or `.buildkite/pipeline.yml` for Buildkite.
 
-4. Replace `pataq-package` in `flake.nix` with your haskell package name (usually specified in `package.yaml`).
+4. Replace `throw "Put your package name here"` in `flake.nix` with your haskell package name (usually specified in `package.yaml`). Don't forget to remove `throw`!
 
 5. If you want to run weeder or hlint in your CI, uncomment related lines in `flake.nix` and in the pipeline configuration. If you don't need weeder or hlint, remove those lines.
 

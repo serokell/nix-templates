@@ -12,11 +12,11 @@ build-all:
   script:
   - nix-build -A checks.x86_64-linux.build-all
 
-# run the tests
+# run all checks
 test:
   stage: test
   script:
-  - nix-build -A checks.x86_64-linux.test
+  - nix-build -A checks.x86_64-linux
 
 # run hlint
 ##hlint:

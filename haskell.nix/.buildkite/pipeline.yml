@@ -8,10 +8,10 @@ steps:
 # don't run tests until all components are built
 - wait
 
-# run the tests
+# run all checks
 - label: test
   commands:
-  - nix-build -A checks.x86_64-linux.test
+  - nix-build -A checks.x86_64-linux
 
 # run hlint
 ##- label: hlint
