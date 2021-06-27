@@ -21,6 +21,7 @@
             [ pkgs.poetry2nix.defaultPoetryOverrides customOverrides ];
         };
 
+        # DON'T FORGET TO PUT YOUR PACKAGE NAME HERE, REMOVING `throw`
         packageName = throw "put your package name here";
       in {
         packages.${packageName} = app;

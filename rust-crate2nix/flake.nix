@@ -12,6 +12,8 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        # DON'T FORGET TO PUT YOUR PACKAGE NAME HERE, REMOVING `throw`
         crateName = throw "Put your crate name here";
 
         inherit (import "${crate2nix}/tools.nix" { inherit pkgs; })
