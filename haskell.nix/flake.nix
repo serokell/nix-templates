@@ -1,35 +1,33 @@
 {
+  nixConfig = {
+    flake-registry = "https://github.com/serokell/flake-registry/raw/zhenya/ops958-hn-nix-template/flake-registry.json";
+  };
+
   inputs = {
     flake-compat = {
-      url = "github:edolstra/flake-compat";
       flake = false;
     };
-    nixpkgs.url = "github:serokell/nixpkgs";
-    haskell-nix.url = "github:serokell/haskell.nix/serokell-latest";
-    hackage-nix = {
-      url = "github:input-output-hk/hackage.nix";
+    hackage = {
       flake = false;
     };
-    stackage-nix = {
-      url = "github:input-output-hk/stackage.nix";
+    stackage = {
       flake = false;
     };
 
     # if you want to run weeder:
     ##haskell-nix-weeder = {
-    ##  url = "github:serokell/haskell-nix-weeder";
     ##  flake = false;
     ##};
   };
 
-  outputs = { self, nixpkgs, haskell-nix, hackage-nix, stackage-nix, ... }:
+  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat }:
 
   # for weeder:
-  ##outputs = { self, nixpkgs, haskell-nix, hackage-nix, stackage-nix, haskell-nix-weeder, ... }:
+  ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, haskell-nix-weeder }:
 
     let
       haskellNix = import haskell-nix {
-        sourcesOverride = { hackage = hackage-nix; stackage = stackage-nix; };
+        sourcesOverride = { hackage = hackage; stackage = stackage; };
       };
 
       pkgs = import nixpkgs haskellNix.nixpkgsArgs;
