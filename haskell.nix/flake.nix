@@ -26,11 +26,11 @@
   ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, haskell-nix-weeder }:
 
     let
-      haskellNix = import haskell-nix {
-        sourcesOverride = { hackage = hackage; stackage = stackage; };
+      haskellNixOverlays = haskell-nix.internal.overlaysOverrideable {
+        sourcesOverride = haskell-nix.internal.sources // { inherit hackage stackage; };
       };
 
-      pkgs = import nixpkgs haskellNix.nixpkgsArgs;
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend haskellNixOverlays.combined-eval-on-build;
       lib = pkgs.lib;
 
       # invoke haskell.nix
