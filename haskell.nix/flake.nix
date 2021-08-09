@@ -1,11 +1,15 @@
 {
   nixConfig = {
-    flake-registry = "https://github.com/serokell/flake-registry/raw/zhenya/ops958-hn-nix-template/flake-registry.json";
+    flake-registry = "https://github.com/serokell/flake-registry/raw/master/flake-registry.json";
   };
 
   inputs = {
     flake-compat = {
       flake = false;
+    };
+    haskell-nix = {
+      inputs.hackage.follows = "hackage";
+      inputs.stackage.follows = "stackage";
     };
     hackage = {
       flake = false;
@@ -26,11 +30,7 @@
   ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, haskell-nix-weeder }:
 
     let
-      haskellNixOverlays = haskell-nix.internal.overlaysOverrideable {
-        sourcesOverride = haskell-nix.internal.sources // { inherit hackage stackage; };
-      };
-
-      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend haskellNixOverlays.combined-eval-on-build;
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend haskell-nix.overlay;
       lib = pkgs.lib;
 
       # invoke haskell.nix
