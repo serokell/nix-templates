@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Serokell <https://serokell.io/>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 { config, inputs, ... }:
 let
   constellation = throw "Set a constellation name!";

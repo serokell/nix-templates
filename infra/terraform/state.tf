@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Serokell <https://serokell.io/>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 ## Bucket for TF state storage
 resource "aws_s3_bucket" "tfstate" {
   bucket = "serokell-"Constellation name here"-tfstate"
