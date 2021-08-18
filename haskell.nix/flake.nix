@@ -33,16 +33,18 @@
       pkgs = nixpkgs.legacyPackages.x86_64-linux.extend haskell-nix.overlay;
       lib = pkgs.lib;
 
+      hs-package-name = "pataq-package";
+
       # invoke haskell.nix
       hs-pkgs = pkgs.haskell-nix.stackProject {
         src = pkgs.haskell-nix.haskellLib.cleanGit {
-          name = "pataq-package";
+          name = hs-package-name;
           src = ./.;
         };
 
         # haskell.nix configuration
         modules = [{
-          packages.pataq-package = {
+          packages.${hs-package-name} = {
             ghcOptions = [
               # fail on warnings
               "-Werror"
@@ -60,7 +62,7 @@
         }];
       };
 
-      hs-pkg = hs-pkgs.pataq-package;
+      hs-pkg = hs-pkgs.${hs-package-name};
 
       # returns the list of all components for a package
       get-package-components = pkg:
@@ -91,7 +93,7 @@
       ##  weeder = weeder-legacy;
       ##  hs-pkgs = hs-pkgs;
       ##  local-packages = [
-      ##    { name = "pataq-package"; subdirectory = "."; }
+      ##    { name = hs-package-name; subdirectory = "."; }
       ##  ];
       ##};
 
