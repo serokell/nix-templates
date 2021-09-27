@@ -1,0 +1,28 @@
+steps:
+
+# build haskell components
+- label: build
+  commands:
+  - nix-build -A checks.x86_64-linux.build-all
+
+# don't run tests until all components are built
+- wait
+
+# run the tests
+- label: test
+  commands:
+  - nix-build -A checks.x86_64-linux.test
+
+# run hlint
+##- label: hlint
+##  commands:
+##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hlint
+##      -c hlint -j --hint .hlint.yaml */
+
+# run weeder
+##- label: weeder
+##  commands:
+##  - nix-build -A weeder-script
+##    # weeder needs .cabal file:
+##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hpack -c hpack
+##  - ./result
