@@ -24,13 +24,15 @@
     ##};
   };
 
-  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat }:
+  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat }:
 
   # for weeder:
-  ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, haskell-nix-weeder }:
+  ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, serokell-nix, haskell-nix-weeder }:
 
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend haskell-nix.overlay;
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend
+          (nixpkgs.lib.composeManyExtensions [ serokell-nix.overlay ]);
+
       lib = pkgs.lib;
 
       hs-package-name = "pataq-package";
@@ -108,6 +110,9 @@
 
         # runs the test
         test = hs-pkg.checks.pataq-test;
+
+        trailing-whitespace = pkgs.build.checkTrailingWhitespace ./.;
+        reuse-lint = pkgs.build.reuseLint ./.;
       };
 
       # script for running weeder
