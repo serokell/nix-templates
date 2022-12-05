@@ -24,11 +24,7 @@
     ##};
   };
 
-  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat }:
-
-  # for weeder:
-  ##outputs = { self, nixpkgs, haskell-nix, hackage, stackage, flake-compat, serokell-nix, haskell-nix-weeder }:
-
+  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux.extend
           (nixpkgs.lib.composeManyExtensions [ serokell-nix.overlay ]);
@@ -81,7 +77,7 @@
       all-components = get-package-components hs-pkg.components;
 
       # for weeder:
-      ##weeder-hacks = import haskell-nix-weeder { inherit pkgs; };
+      ##weeder-hacks = import inputs.haskell-nix-weeder { inherit pkgs; };
 
       # nixpkgs has weeder 2, but we use weeder 1
       ##weeder-legacy = pkgs.haskellPackages.callHackageDirect {
