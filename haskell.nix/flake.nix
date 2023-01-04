@@ -4,6 +4,7 @@
   };
 
   inputs = {
+    flake-utils = "github:numtide/flake-utils";
     flake-compat = {
       flake = false;
     };
@@ -24,10 +25,16 @@
     ##};
   };
 
-  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, ... }@inputs:
+  outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, flake-utils, ... }:
+  flake-utils.lib.eachDefaultSystem(system:
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend
-          (nixpkgs.lib.composeManyExtensions [ serokell-nix.overlay ]);
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          serokell-nix.overlay
+          haskell-nix.overlay
+        ];
+      };
 
       lib = pkgs.lib;
 
@@ -97,12 +104,12 @@
 
     in {
       # nixpkgs revision pinned by this flake
-      legacyPackages.x86_64-linux = pkgs;
+      legacyPackages = pkgs;
 
       # derivations that we can run from CI
-      checks.x86_64-linux = {
+      checks = {
         # builds all haskell components
-        build-all = all-components;
+        build-all = lib.linkFarmFromDrvs "build-all" all-components;
 
         # runs the test
         test = hs-pkg.checks.pataq-test;
@@ -113,5 +120,5 @@
 
       # script for running weeder
       ##weeder-script = weeder-script;
-    };
+    });
 }
