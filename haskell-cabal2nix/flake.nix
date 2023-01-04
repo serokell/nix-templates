@@ -28,15 +28,17 @@
             # Dependency overrides go here
           };
 
-        defaultPackage = self.packages.${system}.${packageName};
+        packages.default = self.packages.${system}.${packageName};
+        defaultPackage = self.packages.${system}.default;
 
-        devShell = pkgs.mkShell {
+        devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             haskellPackages.haskell-language-server # you must build it with your ghc to work
             ghcid
             cabal-install
           ];
-          inputsFrom = builtins.attrValues self.packages.${system};
+          inputsFrom = map (__getAttr "env") (__attrValues self.packages.${system});
         };
+        devShell = self.devShells.${system}.default;
       });
 }
