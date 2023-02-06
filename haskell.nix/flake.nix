@@ -28,11 +28,11 @@
   outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, flake-utils, ... }:
   flake-utils.lib.eachDefaultSystem(system:
     let
+      haskellPkgs = haskell-nix.legacyPackages."${system}";
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
           serokell-nix.overlay
-          haskell-nix.overlay
         ];
       };
 
@@ -41,8 +41,8 @@
       hs-package-name = "pataq-package";
 
       # invoke haskell.nix
-      hs-pkgs = pkgs.haskell-nix.stackProject {
-        src = pkgs.haskell-nix.haskellLib.cleanGit {
+      hs-pkgs = haskellPkgs.haskell-nix.stackProject {
+        src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
           name = hs-package-name;
           src = ./.;
         };
@@ -109,7 +109,7 @@
       # derivations that we can run from CI
       checks = {
         # builds all haskell components
-        build-all = lib.linkFarmFromDrvs "build-all" all-components;
+        build-all = pkgs.linkFarmFromDrvs "build-all" all-components;
 
         # runs the test
         test = hs-pkg.checks.pataq-test;
