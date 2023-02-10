@@ -86,6 +86,11 @@
 
         trailing-whitespace = pkgs.build.checkTrailingWhitespace ./.;
         reuse-lint = pkgs.build.reuseLint ./.;
+        # Uncomment in case your project sources contain bash scripts
+        # shellcheck = pkgs.build.shellcheck ./.;
+
+        hlint = pkgs.build.haskell.hlint ./.;
+        stylish-haskell = pkgs.build.haskell.stylish-haskell ./.;
       };
     });
 }
