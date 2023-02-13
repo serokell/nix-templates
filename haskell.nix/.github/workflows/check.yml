@@ -2,10 +2,44 @@ name: Nix flake check
 on: push
 
 jobs:
-  check:
+  validate:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
 
-      - name: check nix flake
-        run: nix flake check -L
+      - name: xrefcheck
+        run: nix run github:serokell/xrefcheck
+
+      - name: reuse
+        run: nix build -L .#checks.x86_64-linux.reuse-lint
+        # Run step even if the previous one has failed
+        if: success() || failure()
+
+      - name: hlint
+        run: nix build -L .#checks.x86_64-linux.hlint
+        if: success() || failure()
+
+      - name: stylish-haskell
+        run: nix build -L .#checks.x86_64-linux.stylish-haskell
+        if: success() || failure()
+
+      - name: check-trailing-whitespace
+        run: nix build -L .#checks.x86_64-linux.trailing-whitespace
+        if: success() || failure()
+
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build-all
+        run: nix build -L .#checks.x86_64-linux.build-all
+
+  test:
+    runs-on: self-hosted
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: test
+        run: nix build -L .#checks.x86_64-linux.test

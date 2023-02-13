@@ -3,33 +3,43 @@ default:
   tags: [nix]
 
 stages:
+  - validate
   - build
   - test
+
+xrefcheck:
+  stage: validate
+  script:
+    - nix run github:serokell/xrefcheck
+
+reuse:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.reuse-lint
+
+hlint:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.hlint
+
+stylish-haskell:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.stylish-haskell
+
+check-trailing-whitespace:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.trailing-whitespace
 
 # build haskell components
 build-all:
   stage: build
   script:
-  - nix-build -A checks.x86_64-linux.build-all
+  - nix build -L .#checks.x86_64-linux.build-all
 
 # run the tests
 test:
   stage: test
   script:
-  - nix-build -A checks.x86_64-linux.test
-
-# run hlint
-##hlint:
-##  stage: test
-##  script:
-##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hlint
-##      -c hlint --hint .hlint.yaml */
-
-# run weeder
-##weeder:
-##  stage: test
-##  script:
-##  - nix-build -A weeder-script
-##    # weeder needs .cabal file:
-##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hpack -c hpack
-##  - ./result
+  - nix build -L .#checks.x86_64-linux.test
