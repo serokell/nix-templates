@@ -18,21 +18,16 @@
     stackage = {
       flake = false;
     };
-
-    # if you want to run weeder:
-    ##haskell-nix-weeder = {
-    ##  flake = false;
-    ##};
   };
 
   outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, flake-utils, ... }:
   flake-utils.lib.eachDefaultSystem(system:
     let
+      haskellPkgs = haskell-nix.legacyPackages."${system}";
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
           serokell-nix.overlay
-          haskell-nix.overlay
         ];
       };
 
@@ -41,8 +36,8 @@
       hs-package-name = "pataq-package";
 
       # invoke haskell.nix
-      hs-pkgs = pkgs.haskell-nix.stackProject {
-        src = pkgs.haskell-nix.haskellLib.cleanGit {
+      hs-pkgs = haskellPkgs.haskell-nix.stackProject {
+        src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
           name = hs-package-name;
           src = ./.;
         };
@@ -55,13 +50,7 @@
               "-Werror"
               # disable optimisations, we don't need them if we don't package or deploy the executable
               "-O0"
-
-              # for weeder: produce *.dump-hi files
-              ##"-ddump-to-file" "-ddump-hi"
             ];
-
-            # for weeder: collect all *.dump-hi files
-            ##postInstall = weeder-hacks.collect-dump-hi-files;
           };
 
         }];
@@ -83,25 +72,6 @@
       # all components for the current haskell package
       all-components = get-package-components hs-pkg.components;
 
-      # for weeder:
-      ##weeder-hacks = import inputs.haskell-nix-weeder { inherit pkgs; };
-
-      # nixpkgs has weeder 2, but we use weeder 1
-      ##weeder-legacy = pkgs.haskellPackages.callHackageDirect {
-      ##  pkg = "weeder";
-      ##  ver = "1.0.9";
-      ##  sha256 = "0gfvhw7n8g2274k74g8gnv1y19alr1yig618capiyaix6i9wnmpa";
-      ##} {};
-
-      # a derivation which generates a script for running weeder
-      ##weeder-script = weeder-hacks.weeder-script {
-      ##  weeder = weeder-legacy;
-      ##  hs-pkgs = hs-pkgs;
-      ##  local-packages = [
-      ##    { name = hs-package-name; subdirectory = "."; }
-      ##  ];
-      ##};
-
     in {
       # nixpkgs revision pinned by this flake
       legacyPackages = pkgs;
@@ -109,16 +79,18 @@
       # derivations that we can run from CI
       checks = {
         # builds all haskell components
-        build-all = lib.linkFarmFromDrvs "build-all" all-components;
+        build-all = pkgs.linkFarmFromDrvs "build-all" all-components;
 
         # runs the test
         test = hs-pkg.checks.pataq-test;
 
         trailing-whitespace = pkgs.build.checkTrailingWhitespace ./.;
         reuse-lint = pkgs.build.reuseLint ./.;
-      };
+        # Uncomment in case your project sources contain bash scripts
+        # shellcheck = pkgs.build.shellcheck ./.;
 
-      # script for running weeder
-      ##weeder-script = weeder-script;
+        hlint = pkgs.build.haskell.hlint ./.;
+        stylish-haskell = pkgs.build.haskell.stylish-haskell ./.;
+      };
     });
 }
