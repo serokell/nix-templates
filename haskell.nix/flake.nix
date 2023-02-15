@@ -4,7 +4,7 @@
   };
 
   inputs = {
-    flake-utils = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
     flake-compat = {
       flake = false;
     };
