@@ -1,5 +1,25 @@
 steps:
 
+- label: xrefcheck
+  commands:
+  - nix run github:serokell/xrefcheck
+
+- label: reuse
+  commands:
+  - nix build -L .#checks.x86_64-linux.reuse-lint
+
+- label: hlint
+  commands:
+  - nix build -L .#checks.x86_64-linux.hlint
+
+- label: stylish-haskell
+  commands:
+  - nix build -L .#checks.x86_64-linux.stylish-haskell
+
+- label: check-trailing-whitespace
+  commands:
+  - nix build -L .#checks.x86_64-linux.trailing-whitespace
+
 # build haskell components
 - label: build
   commands:
@@ -12,17 +32,3 @@ steps:
 - label: test
   commands:
   - nix-build -A checks.x86_64-linux.test
-
-# run hlint
-##- label: hlint
-##  commands:
-##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hlint
-##      -c hlint -j --hint .hlint.yaml */
-
-# run weeder
-##- label: weeder
-##  commands:
-##  - nix-build -A weeder-script
-##    # weeder needs .cabal file:
-##  - nix run -f. legacyPackages.x86_64-linux.haskellPackages.hpack -c hpack
-##  - ./result
