@@ -29,9 +29,14 @@
         description = "An infrastructure repository";
       };
 
-      haskell-nix = {
-        path = ./haskell.nix;
+      haskell-application = {
+        path = ./haskell.nix/application;
         description = "Stack project built with haskell.nix";
+      };
+
+      haskell-library = {
+        path = ./haskell.nix/library;
+        description = "Haskell library built and tested with different versions of ghc";
       };
 
     };
