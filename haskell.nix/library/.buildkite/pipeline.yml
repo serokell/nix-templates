@@ -1,0 +1,48 @@
+steps:
+
+- label: xrefcheck
+  commands:
+  - nix run github:serokell/xrefcheck
+
+- label: reuse
+  commands:
+  - nix build -L .#checks.x86_64-linux.reuse-lint
+
+- label: hlint
+  commands:
+  - nix build -L .#checks.x86_64-linux.hlint
+
+- label: stylish-haskell
+  commands:
+  - nix build -L .#checks.x86_64-linux.stylish-haskell
+
+- label: check-trailing-whitespace
+  commands:
+  - nix build -L .#checks.x86_64-linux.trailing-whitespace
+
+# - label: shellcheck
+#   commands:
+#   - nix build -L .#checks.x86_64-linux.shellcheck
+
+# build haskell components
+- group: build
+  steps:
+    - label: ghc{{matrix}}
+      command: nix build -L .#checks.x86_64-linux.ghc${{ matrix }}:build-all --keep-going
+
+      # list of GHC versions must be in sync with ghc-versions from flake.nix
+      matrix: &ghc-matrix
+        - "884"
+        - "8107"
+        - "902"
+
+# don't run tests until all components are built
+- wait
+
+# run the tests
+- group: test
+  steps:
+    - label: ghc{{matrix}}
+      command: nix build -L .#checks.x86_64-linux.ghc${{ matrix }}:test-all --keep-going
+
+      matrix: *ghc-matrix

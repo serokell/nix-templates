@@ -1,0 +1,56 @@
+default:
+  # specify nix tag to select runner
+  tags: [nix]
+
+stages:
+  - validate
+  - build
+  - test
+
+xrefcheck:
+  stage: validate
+  script:
+    - nix run github:serokell/xrefcheck
+
+reuse:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.reuse-lint
+
+hlint:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.hlint
+
+stylish-haskell:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.stylish-haskell
+
+check-trailing-whitespace:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.trailing-whitespace
+
+# shellcheck:
+#   stage: validate
+#   script:
+#     - nix build -L .#checks.x86_64-linux.shellcheck
+
+# build haskell components
+build-all:
+  stage: build
+  script:
+    - nix build -L .#checks.x86_64-linux.ghc$GHC:build-all --keep-going
+  parallel: &ghc-matrix
+
+    # list of GHC versions must be in sync with ghc-versions from flake.nix
+    matrix:
+      - GHC: [884, 8107, 902]
+
+# run the tests
+test:
+  stage: test
+  script:
+    - nix build -L .#checks.x86_64-linux.ghc$GHC:test-all --keep-going
+  parallel: *ghc-matrix
