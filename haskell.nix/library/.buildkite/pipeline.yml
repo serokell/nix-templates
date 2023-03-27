@@ -24,6 +24,14 @@ steps:
 #   commands:
 #   - nix build -L .#checks.x86_64-linux.shellcheck
 
+# - label: check-stack2cabal
+#   commands:
+#   - nix develop .#ci -c bash -c 'stack2cabal && git add -A && git diff HEAD --exit-code'
+
+# - label: check-hpack
+#   commands:
+#   - nix build -L .#checks.x86_64-linux.hpack
+
 # build haskell components
 - group: build
   steps:

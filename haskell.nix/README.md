@@ -55,4 +55,8 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
 
     2. If your project contains bash scripts, uncomment related lines in `flake.nix` and in the pipeline configuration. If you don't need `shellcheck`, remove those lines.
 
+    3. If you're using `hpack` or `stack2cabal` in your project, make sure to uncomment the related lines in both `flake.nix` and pipeline configuration files. To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`.
+
+    4. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
+
 - Enjoy working CI!

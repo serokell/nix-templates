@@ -85,6 +85,11 @@
               (lib.attrValues pkg.${hs-package-name}.checks);
             in lib.nameValuePair "${ghc}:test-all"
               (pkgs.linkFarmFromDrvs "test-all" tests)) pkgs-per-ghc;
+
+        # Uncomment if your project uses stack2cabal to generate cabal files
+        # stack2cabal = haskellPkgs.haskell.lib.overrideCabal haskellPkgs.haskellPackages.stack2cabal
+        # (drv: { jailbreak = true; broken = false; });
+
       in {
         # nixpkgs revision pinned by this flake
         legacyPackages = pkgs;
@@ -92,6 +97,17 @@
         # Uncomment if your project uses GitHub actions
         # ghc-matrix = {
         #   include = map (ver: { ghc = ver; }) ghc-versions;
+        # };
+
+        # Uncomment if your project uses hpack or stack2cabal to update cabal files, remove the one you don't use
+        # To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`
+        # devShell = {
+        #   ci = pkgs.mkShell {
+        #     buildInputs = [
+        #       pkgs.hpack
+        #       stack2cabal
+        #     ];
+        #   };
         # };
 
         # derivations that we can run from CI
@@ -104,6 +120,8 @@
 
           hlint = pkgs.build.haskell.hlint ./.;
           stylish-haskell = pkgs.build.haskell.stylish-haskell ./.;
+          # Uncomment if your project uses hpack to generate cabal files
+          # hpack = pkgs.build.haskell.hpack ./.;
         };
       });
 }
