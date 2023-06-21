@@ -55,8 +55,8 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: build
-        run: nix build -L .#checks.x86_64-linux.ghc${{ matrix.ghc }}:build-all --keep-going
+        run: nix build -L .#checks.x86_64-linux.${{ matrix.ghc }}:build-all --keep-going
 
       - name: test
-        run: nix build -L .#checks.x86_64-linux.ghc${{ matrix.ghc }}:test-all --keep-going
+        run: nix build -L .#checks.x86_64-linux.${{ matrix.ghc }}:test-all --keep-going
         if: success() || failure()

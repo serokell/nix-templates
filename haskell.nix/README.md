@@ -16,7 +16,7 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
 
     1.
        - **FOR APPLICATION:** Replace `pataq-package` in `flake.nix` with your haskell package name (usually specified in `package.yaml`). And replace `pataq-test` at the bottom of `flake.nix` with the name of the test component in your package.
-       - **FOR LIBRARY:** Replace `pataq-package` in `flake.nix` with your haskell library name (usually specified in `package.yaml`). Then change `ghc-versions` in `flake.nix` to the list of GHC versions that will be used to build and test your library. If you are using GitHub actions, uncomment `ghc-matrix` in `flake.nix`, otherwise change `matrix` in the CI pipeline to the list of GHC versions specified in `ghc-versions`.
+       - **FOR LIBRARY:** Replace `pataq-package` in `flake.nix` with your haskell library name (usually specified in `package.yaml`). Then list the GHC versions that will be used to build and test your library in the [`tested-with`](https://cabal.readthedocs.io/en/3.4/cabal-package.html#pkg-field-tested-with) stanza of the `.cabal` file and change `./pataq-package.cabal` in `ghc-versions` in `flake.nix` to the path to your `.cabal` file. If you are using GitHub actions, uncomment `ghc-matrix` in `flake.nix`, otherwise change `matrix` in the CI pipeline to the list of GHC versions specified in `ghc-versions`.
     If your project contains multiple packages, you need to make the following changes to `flake.nix`:
             * Replace `hs-package-name` with a list of package names (note the "s" at the end of the attribute name):
             ```nix

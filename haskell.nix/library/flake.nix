@@ -24,6 +24,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         haskellPkgs = haskell-nix.legacyPackages."${system}";
+        inherit (serokell-nix.lib) cabal;
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
@@ -35,10 +36,10 @@
 
         hs-package-name = "pataq-package";
 
-        ghc-versions = [ "884" "8107" "902" ];
+        ghc-versions = cabal.getTestedWithVersions ./pataq-package.cabal;
 
         # invoke haskell.nix for each ghc version listed in ghc-versions
-        pkgs-per-ghc = lib.genAttrs (map (v: "ghc${v}") ghc-versions)
+        pkgs-per-ghc = lib.genAttrs ghc-versions
           (ghc: haskellPkgs.haskell-nix.cabalProject {
             src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
               name = hs-package-name;
