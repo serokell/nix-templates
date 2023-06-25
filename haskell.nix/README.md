@@ -56,3 +56,116 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
     2. If your project contains bash scripts, uncomment related lines in `flake.nix` and in the pipeline configuration. If you don't need `shellcheck`, remove those lines.
 
 - Enjoy working CI!
+
+## Impure tests
+
+By default, these templates run Haskell tests in a pure nix builds, so it is not possible to access external resources such as a database or docker socket.
+
+To get around this, you first need to provide a nix shell with the test executable along with other packages needed for the test environment.
+
+Here, as an example, we provide a nix shell with the `pataq-package-test` executable, as well as two additional packages: `ephemeralpg`, used to create the ephemeral database, and `postgresql`, used to create the database schema:
+
+```nix
+devShells = {
+  impure-tests = pkgs.mkShell {
+    buildInputs = [
+      hs-pkg.components.tests.pataq-package-test
+      pkgs.ephemeralpg # we need pg_tmp to create an ephemeral db
+      pkgs.postgresql # we need psql to create the db schema
+    ];
+  };
+};
+```
+
+We then create a bash script that sets up the required environment and runs the `pataq-package-test`:
+
+```bash
+#!/usr/bin/env bash
+
+# Set up the necessary environment
+set -euo pipefail
+export LANG="C.UTF-8"
+export LC_ALL="C.UTF-8"
+PSQL_CONNECTION_STRING=$(pg_tmp -t)
+echo "Ephemeral PostgreSQL connection string: $PSQL_CONNECTION_STRING"
+
+psql "$PSQL_CONNECTION_STRING" -f ./pataq-schema.sql
+
+# some explanation for the env var magic below https://stackoverflow.com/questions/918886/how-do-i-split-a-string-on-a-delimiter-in-bash
+portAndDb=${PSQL_CONNECTION_STRING##*:}
+
+# Environment variables used by the test suite
+export POSTGRES_PORT_TEST=${portAndDb%%/*}
+export POSTGRES_USER_TEST=$(whoami)
+export POSTGRES_DATABASE_TEST=test
+
+# Run tests
+pataq-package-test
+```
+
+And finally, we can run our impure tests from CI:
+
+```
+nix develop .#impure-tests -c ./impure-tests.sh
+```
+
+As an alternative solution, you can also use the [make-test-python](https://nixos.org/manual/nixos/unstable/index.html#sec-nixos-test-nodes) module, which uses a nixos virtual machine:
+
+```nix
+impure-tests = import "${nixpkgs}/nixos/tests/make-test-python.nix" ({ ... }:
+  {
+    name = "${hs-package-name}-tests";
+    nodes = {
+
+      # Define nixos VM
+      testvm = { ... }: let
+        dbUser = "postgres";
+        dbName = "postgres";
+        dbPort = 5342;
+      in {
+        virtualisation.memorySize = 1024;
+        virtualisation.diskSize = 1024;
+
+        # Set up the necessary environment
+        services.postgresql = {
+          enable = true;
+          port = dbPort;
+          initialScript = ./pataq-schema.sql;
+          ensureDatabases = [ dbName ];
+          ensureUsers = [
+            { name = dbUser;
+              ensurePermissions = {
+                "DATABASE \"${dbName}\"" = "ALL PRIVILEGES";
+              };
+            }
+          ];
+          authentication = ''
+            host  all  ${dbUser}  localhost  trust
+          '';
+        };
+
+        # Environment variables used by the test suite
+        environment.sessionVariables = {
+          POSTGRES_PORT_TEST = builtins.toString dbPort;
+          POSTGRES_USER_TEST = dbUser;
+          POSTGRES_DATABASE_TEST = dbName;
+        };
+      };
+    };
+
+    testScript = ''
+      #Strat VM
+      start_all()
+
+      # Wait until the postgres service is up and the port is open
+      testvm.wait_for_unit("postgresql.service")
+      testvm.wait_for_open_port(5432)
+
+      # Run tests
+      testvm.succeed("${hs-pkg.components.tests.pataq-package-test}/bin/pataq-package-test")
+
+      # Shutdown VM
+      testvm.shutdown()
+    '';
+}) { inherit pkgs system; };
+```
