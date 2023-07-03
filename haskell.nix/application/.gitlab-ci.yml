@@ -32,6 +32,16 @@ check-trailing-whitespace:
   script:
     - nix build -L .#checks.x86_64-linux.trailing-whitespace
 
+# check-stack2cabal:
+#   stage: validate
+#   script:
+#     - nix develop .#ci -c bash -c 'stack2cabal && git add -A && git diff HEAD --exit-code'
+
+# check-hpack:
+#   stage: validate
+#   script:
+#     - nix build -L .#checks.x86_64-linux.hpack
+
 # build haskell components
 build-all:
   stage: build

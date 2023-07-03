@@ -27,6 +27,14 @@ jobs:
         run: nix build -L .#checks.x86_64-linux.trailing-whitespace
         if: success() || failure()
 
+      # - name: check-stack2cabal
+      #   run: nix develop .#ci -c bash -c 'stack2cabal && git add -A && git diff HEAD --exit-code'
+      #   if: success() || failure()
+
+      # - name: check-hpack
+      #   run: nix build -L .#checks.x86_64-linux.hpack
+      #   if: success() || failure()
+
       # - name: shellcheck
       #   run: nix build -L .#checks.x86_64-linux.shellcheck
       #   if: success() || failure()
