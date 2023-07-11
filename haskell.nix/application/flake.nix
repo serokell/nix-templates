@@ -106,6 +106,8 @@
 
         hlint = pkgs.build.haskell.hlint ./.;
         stylish-haskell = pkgs.build.haskell.stylish-haskell ./.;
+        # Uncomment if your project is published on hackage
+        # cabal-check = pkgs.build.haskell.cabal-check ./.;
         # Uncomment if your project uses hpack to generate cabal files
         # hpack = pkgs.build.haskell.hpack ./.;
       };

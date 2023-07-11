@@ -32,6 +32,11 @@ check-trailing-whitespace:
   script:
     - nix build -L .#checks.x86_64-linux.trailing-whitespace
 
+cabal-check:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.cabal-check
+
 # shellcheck:
 #   stage: validate
 #   script:
