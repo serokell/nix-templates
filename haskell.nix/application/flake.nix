@@ -39,6 +39,7 @@
       hs-pkgs = haskellPkgs.haskell-nix.stackProject {
         src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
           name = hs-package-name;
+          # specify the path to the root of your haskell project (the directory containing stack.yaml or cabal.project)
           src = ./.;
         };
 

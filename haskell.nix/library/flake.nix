@@ -43,6 +43,7 @@
           (ghc: haskellPkgs.haskell-nix.cabalProject {
             src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
               name = hs-package-name;
+              # specify the path to the root of your haskell project (the directory containing stack.yaml or cabal.project)
               src = ./.;
             };
             compiler-nix-name = ghc;
