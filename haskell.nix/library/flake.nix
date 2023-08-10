@@ -24,7 +24,6 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         haskellPkgs = haskell-nix.legacyPackages."${system}";
-        inherit (serokell-nix.lib) cabal;
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
@@ -33,61 +32,33 @@
         };
 
         lib = pkgs.lib;
-
-        hs-package-name = "pataq-package";
-
-        ghc-versions = cabal.getTestedWithVersions ./pataq-package.cabal;
-
-        # invoke haskell.nix for each ghc version listed in ghc-versions
-        pkgs-per-ghc = lib.genAttrs ghc-versions
-          (ghc: haskellPkgs.haskell-nix.cabalProject {
-            src = haskellPkgs.haskell-nix.haskellLib.cleanGit {
-              name = hs-package-name;
-              # specify the path to the root of your haskell project (the directory containing stack.yaml or cabal.project)
-              src = ./.;
-            };
-            compiler-nix-name = ghc;
-
-            # haskell.nix configuration
-            modules = [{
-              packages.${hs-package-name} = {
+        ci = serokell-nix.lib.haskell.makeCI haskellPkgs {
+          # specify the path to the root of your haskell project (the directory containing stack.yaml or cabal.project)
+          src = ./.;
+          # you can specify a list of ghc versions to build packages,
+          # if not specified the ghc versions will be taken from tested-with stanzas from .cabal files
+          # ghcVersions = [ "ghc902" "ghc926" ];
+          # you can specify additional stack yaml files in addition to stack.yaml
+          # stackFiles = [ "stack-lts-21-5.yaml" ];
+          # you can specify additional stack resolvers, they will be replaced in stack.yaml
+          # resolvers = [ "lts-19.13" ];
+          # you can disable building with stack if your project does not use stack
+          # buildWithStack = false;
+          # haskell.nix configuration
+          extraArgs = {
+            modules = [
+              (serokell-nix.lib.haskell.optionsLocalPackages {
                 ghcOptions = [
                   # fail on warnings
                   "-Werror"
                   # disable optimisations, we don't need them if we don't package or deploy the executable
                   "-O0"
                 ];
-              };
-
-            }];
-          });
-
-        # returns the list of all components for a package
-        get-package-components = pkg:
-          # library
-          lib.optional (pkg ? library) pkg.library
-          # haddock
-          ++ lib.optional (pkg ? library) pkg.library.haddock
-          # exes, tests and benchmarks
-          ++ lib.attrValues pkg.exes
-          ++ lib.attrValues pkg.tests
-          ++ lib.attrValues pkg.benchmarks;
-
-        # all components for each specified ghc version
-        build-all = lib.mapAttrs'
-          (ghc: pkg:
-            let components = get-package-components pkg.${hs-package-name}.components;
-            in lib.nameValuePair "${ghc}:build-all"
-              (pkgs.linkFarmFromDrvs "build-all" components)) pkgs-per-ghc;
-
-        # all tests for each specified ghc version
-        test-all = lib.mapAttrs'
-          (ghc: pkg:
-            let tests = lib.filter lib.isDerivation
-              (lib.attrValues pkg.${hs-package-name}.checks);
-            in lib.nameValuePair "${ghc}:test-all"
-              (pkgs.linkFarmFromDrvs "test-all" tests)) pkgs-per-ghc;
-
+              })
+            ];
+          };
+        };
+        
         # Uncomment if your project uses stack2cabal to generate cabal files
         # stack2cabal = haskellPkgs.haskell.lib.overrideCabal haskellPkgs.haskellPackages.stack2cabal
         # (drv: { jailbreak = true; broken = false; });
@@ -97,9 +68,7 @@
         legacyPackages = pkgs;
 
         # Uncomment if your project uses GitHub actions
-        # ghc-matrix = {
-        #   include = map (ver: { ghc = ver; }) ghc-versions;
-        # };
+        # inherit (ci) build-matrix;
 
         # Uncomment if your project uses hpack or stack2cabal to update cabal files, remove the one you don't use
         # To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`
@@ -113,7 +82,7 @@
         # };
 
         # derivations that we can run from CI
-        checks = build-all // test-all // {
+        checks = ci.build-all // ci.test-all // {
 
           trailing-whitespace = pkgs.build.checkTrailingWhitespace ./.;
           reuse-lint = pkgs.build.reuseLint ./.;

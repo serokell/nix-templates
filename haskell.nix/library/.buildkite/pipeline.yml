@@ -35,14 +35,21 @@ steps:
 # build haskell components
 - group: build
   steps:
-    - label: ghc{{matrix}}
-      command: nix build -L .#checks.x86_64-linux.ghc${{ matrix }}:build-all --keep-going
+    - label: {{matrix}}
+      command: nix build -L .#checks.x86_64-linux.${{ matrix }}:build-all --keep-going
 
-      # list of GHC versions must be in sync with ghc-versions from flake.nix
-      matrix: &ghc-matrix
-        - "884"
-        - "8107"
-        - "902"
+      # list of check prefixes for haskell components
+      matrix: &build-matrix
+        # ghc versions
+        - "ghc884"
+        - "ghc8107"
+        - "ghc902"
+        # stack files and resolvers
+        # NOTE: all dots should be replaced with dashes
+        - "stack-yaml"
+        - "stack-lts-21-5-yaml"
+        - "lts-19-13"
+
 
 # don't run tests until all components are built
 - wait
@@ -50,7 +57,7 @@ steps:
 # run the tests
 - group: test
   steps:
-    - label: ghc{{matrix}}
-      command: nix build -L .#checks.x86_64-linux.ghc${{ matrix }}:test-all --keep-going
+    - label: {{matrix}}
+      command: nix build -L .#checks.x86_64-linux.${{ matrix }}:test-all --keep-going
 
-      matrix: *ghc-matrix
+      matrix: *build-matrix

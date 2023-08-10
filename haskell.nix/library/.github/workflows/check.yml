@@ -43,9 +43,9 @@ jobs:
       #   run: nix build -L .#checks.x86_64-linux.shellcheck
       #   if: success() || failure()
 
-  # Export JSON serialized ghc-versions
-  # For this to work, you must uncomment ghc-matrix in flake.nix
-  ghc-versions:
+  # Export JSON serialized check prefixes
+  # For this to work, you must uncomment inherit (ci) build-matrix in flake.nix
+  check-prefixes:
     runs-on: [self-hosted, nix]
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -53,22 +53,22 @@ jobs:
     - uses: actions/checkout@v3
 
     - id: set-matrix
-      run: echo "matrix=$(nix eval --json .#ghc-matrix.x86_64-linux)" >> $GITHUB_OUTPUT
+      run: echo "matrix=$(nix eval --json .#build-matrix.x86_64-linux)" >> $GITHUB_OUTPUT
 
   build-and-test:
-    needs: ghc-versions
-    name: ghc${{ matrix.ghc }}
+    needs: check-prefixes
+    name: ${{ matrix.prefix }}
     runs-on: [self-hosted, nix]
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(needs.ghc-versions.outputs.matrix)}}
+      matrix: ${{fromJson(needs.check-prefixes.outputs.matrix)}}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: build
-        run: nix build -L .#checks.x86_64-linux.${{ matrix.ghc }}:build-all --keep-going
+        run: nix build -L .#checks.x86_64-linux.${{ matrix.prefix }}:build-all --keep-going
 
       - name: test
-        run: nix build -L .#checks.x86_64-linux.${{ matrix.ghc }}:test-all --keep-going
+        run: nix build -L .#checks.x86_64-linux.${{ matrix.prefix }}:test-all --keep-going
         if: success() || failure()
