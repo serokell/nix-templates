@@ -14,44 +14,8 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
 
 - Afterwards, adjust the template for your project:
 
-    1. Replace `pataq-package` in `flake.nix` with your haskell package name (usually specified in `package.yaml`). If the root of your haskell project (directory containing `stack.yaml` or `cabal.project`) is not the same as the directory where `flake.nix` is ​​located, you need to set `src = ./.;` from `flake.nix` to the root of your haskell project.
-       - **FOR APPLICATION:**  Replace `pataq-test` at the bottom of `flake.nix` with the name of the test component in your package.
-       - **FOR LIBRARY:** List the GHC versions that will be used to build and test your library in the [`tested-with`](https://cabal.readthedocs.io/en/3.4/cabal-package.html#pkg-field-tested-with) stanza of the `.cabal` file and change `./pataq-package.cabal` in `ghc-versions` in `flake.nix` to the path to your `.cabal` file. If you are using GitHub actions, uncomment `ghc-matrix` in `flake.nix`, otherwise change `matrix` in the CI pipeline to the list of GHC versions specified in `ghc-versions`.
-    If your project contains multiple packages, you need to make the following changes to `flake.nix`:
-            * Replace `hs-package-name` with a list of package names (note the "s" at the end of the attribute name):
-            ```nix
-            hs-package-names = [ "first-package-name" "second-package-name" ];
-            ```
-            * Update `modules`, `build-all`, and `test-all` to map over all packages as follows:
-
-            ```nix
-            modules = map (hs-package-name: {
-              packages.${hs-package-name} = {
-                ghcOptions = [
-                  "-Werror"
-                  "-O0"
-                ];
-              };
-            }) hs-package-names;
-            ```
-
-            ```nix
-            build-all = lib.mapAttrs'
-              (ghc: pkg:
-                let components = lib.concatMap (hs-package-name:
-                  get-package-components pkg.${hs-package-name}.components) hs-package-names;
-                in lib.nameValuePair "${ghc}:build-all"
-                  (pkgs.linkFarmFromDrvs "build-all" components)) pkgs-per-ghc;
-            ```
-
-            ```nix
-            test-all = lib.mapAttrs'
-              (ghc: pkg:
-                let tests = lib.concatMap (hs-package-name: lib.filter lib.isDerivation
-                  (lib.attrValues pkg.${hs-package-name}.checks)) hs-package-names;
-                in lib.nameValuePair "${ghc}:test-all"
-                  (pkgs.linkFarmFromDrvs "test-all" tests)) pkgs-per-ghc;
-            ```
+    1. If the root of your haskell project (directory containing `stack.yaml` or `cabal.project`) is not the same as the directory where `flake.nix` is ​​located, you need to set `src = ./.;` from `flake.nix` to the root of your haskell project.
+       - **FOR LIBRARY:** List the GHC versions that will be used to build and test your library in the [`tested-with`](https://cabal.readthedocs.io/en/3.4/cabal-package.html#pkg-field-tested-with) stanza of the `.cabal` files, alternatively you can set them with the `ghcVersions` argument. If your project contains multiple `stack.yaml` files, or if you want to test your library with different stack resolvers, you can set them in `stackFiles` and `resolvers` respectively. If you are using GitHub actions, uncomment `inherit (ci) build-matrix` in `flake.nix`, otherwise change `matrix` in the CI pipeline to the list of GHC versions, `stack.yaml` files, and resolvers.
 
     2. If your project contains bash scripts, uncomment related lines in `flake.nix` and in the pipeline configuration. If you don't need `shellcheck`, remove those lines.
 
