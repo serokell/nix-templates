@@ -70,16 +70,22 @@
         # Uncomment if your project uses GitHub actions
         # inherit (ci) build-matrix;
 
-        # Uncomment if your project uses hpack or stack2cabal to update cabal files, remove the one you don't use
+        devShell = {
+          ci = pkgs.mkShell {
+            buildInputs = [
+              # Uncomment if your project uses hpack or stack2cabal to update cabal files, remove the one you don't use
         # To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`
-        # devShell = {
-        #   ci = pkgs.mkShell {
-        #     buildInputs = [
-        #       pkgs.hpack
-        #       stack2cabal
-        #     ];
-        #   };
-        # };
+              # pkgs.hpack
+              # stack2cabal
+
+              # Uncomment if your project uses scheduled pipeline for `cabal outdated` check
+              # pkgs.cabal-install
+              # pkgs.curl
+              # # GHC is required for `cabal outdated`
+              # pkgs.ghc
+            ];
+          };
+        };
 
         # derivations that we can run from CI
         checks = ci.build-all // ci.test-all // {
