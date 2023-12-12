@@ -5,7 +5,7 @@ jobs:
   validate:
     runs-on: [self-hosted, nix]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: xrefcheck
         run: nix run github:serokell/xrefcheck
@@ -50,7 +50,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - id: set-matrix
       run: echo "matrix=$(nix eval --json .#build-matrix.x86_64-linux)" >> $GITHUB_OUTPUT
@@ -64,7 +64,7 @@ jobs:
       matrix: ${{fromJson(needs.check-prefixes.outputs.matrix)}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: build
         run: nix build -L .#checks.x86_64-linux.${{ matrix.prefix }}:build-all --keep-going
