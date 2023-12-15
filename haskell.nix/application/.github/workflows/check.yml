@@ -5,7 +5,7 @@ jobs:
   validate:
     runs-on: [self-hosted, nix]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: xrefcheck
         run: nix run github:serokell/xrefcheck
@@ -42,7 +42,7 @@ jobs:
   build:
     runs-on: [self-hosted, nix]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: build-all
         run: nix build -L .#checks.x86_64-linux.build-all --keep-going
@@ -51,7 +51,7 @@ jobs:
     runs-on: [self-hosted, nix]
     needs: [build]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: test
         run: nix build -L .#checks.x86_64-linux.test
