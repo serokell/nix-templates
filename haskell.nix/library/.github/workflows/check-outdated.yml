@@ -1,5 +1,6 @@
 on:
   schedule:
+    # runs every Monday at 10:00 am UTC
     - cron: '0 10 * * 1'
 
 jobs:
@@ -20,9 +21,9 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
           }
 
-          nix develop -c cabal update
+          nix develop .#ci -c cabal update
           trap 'output' ERR
-          msg=$(nix develop -c cabal outdated --exit-code)
+          msg=$(nix develop .#ci -c cabal outdated --exit-code)
 
   report-outdated:
     runs-on: [self-hosted, nix]
@@ -35,5 +36,6 @@ jobs:
         run: |
           curl -XPOST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            # you can change 'libraries' to the channel dedicated to the library, if there is one
             -d "channel=libraries" \
             -d "text=$MSG"

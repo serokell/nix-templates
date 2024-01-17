@@ -79,9 +79,9 @@ test:
 #         echo "https://gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME has outdated dependencies" > msg.txt;
 #         echo "$msg" >> msg.txt;
 #       }
-#     - nix develop -c cabal update
+#     - nix develop .#ci -c cabal update
 #     - trap 'output' ERR
-#     - msg=$(nix develop -c cabal outdated --exit-code)
+#     - msg=$(nix develop .#ci -c cabal outdated --exit-code)
 #   rules:
 #     - if: $CI_PIPELINE_SOURCE == "schedule"
 #   artifacts:
@@ -92,6 +92,7 @@ test:
 # report-outdated:
 #   stage: cabal-outdated
 #   script:
+#     # you can change 'libraries' to the channel dedicated to the library, if there is one
 #     - curl -XPOST https://slack.com/api/chat.postMessage -H "Authorization: Bearer $SLACK_TOKEN" -d "channel=libraries" -d "text=$(cat ./msg.txt)"
 #   rules:
 #     - if: $CI_PIPELINE_SOURCE == "schedule"
