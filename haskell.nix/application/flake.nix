@@ -18,6 +18,7 @@
     stackage = {
       flake = false;
     };
+    serokell-nix.inputs.haskell-nix.follows = "haskell-nix";
   };
 
   outputs = { self, nixpkgs, haskell-nix, hackage, stackage, serokell-nix, flake-compat, flake-utils, ... }:
@@ -43,6 +44,8 @@
         # haskell.nix configuration
         modules = [
           (serokell-nix.lib.haskell.optionsLocalPackages {
+            # Uncomment if your project uses weeder check
+            # writeHieFiles = true;
             ghcOptions = [
               # fail on warnings
               "-Werror"
@@ -91,6 +94,11 @@
         # cabal-check = pkgs.build.haskell.cabal-check ./.;
         # Uncomment if your project uses hpack to generate cabal files
         # hpack = pkgs.build.haskell.hpack ./.;
+        # Uncomment to check for dead code
+        # weeder = pkgs.build.haskell.weeder {
+        #   weederToml = ./weeder.toml;
+        #   inherit hs-pkgs;
+        # };
       };
     });
 }
