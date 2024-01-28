@@ -21,7 +21,9 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
 
     3. If you're using `hpack` or `stack2cabal` in your project, make sure to uncomment the related lines in both `flake.nix` and pipeline configuration files. To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`.
 
-    4. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
+    4. You might want to add a [`weeder`](https://github.com/ocharles/weeder/) check to check for dead code in your application. To do this uncomment the related lines in both `flake.nix`(do not forget to uncomment `writeHieFiles = true;`) and pipeline configuration files, then copy `weeder.toml`(For more advanced setup, please refer to the [corresponding section](https://github.com/ocharles/weeder/?tab=readme-ov-file#calling-weederUsually) of the `weeder` README) to your repository. For a library, code is usually considered dead unless it is exported; such cases are already detected by GHC warnings, so no `weeder` is required.
+
+    5. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
 
 - Enjoy working CI!
 
