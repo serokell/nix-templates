@@ -6,6 +6,7 @@ stages:
   - validate
   - build
   - test
+  - cabal-outdated
 
 xrefcheck:
   stage: validate
@@ -69,3 +70,34 @@ test:
   script:
     - nix build -L .#checks.x86_64-linux.ghc$GHC:test-all --keep-going
   parallel: *ghc-matrix
+
+# uncomment to run scheduled `cabal outdated` check, in order for it to work you will need to set a schedule in the gitlab repository settings
+# check-outdated:
+#   stage: cabal-outdated
+#   script:
+#     - function output {
+#         echo "Repository https://gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME has outdated dependencies" > msg.txt;
+#         echo "$msg" >> msg.txt;
+#       }
+#     - nix develop .#ci -c cabal update
+#     - trap 'output' ERR
+#     - msg=$(nix develop .#ci -c cabal outdated --exit-code)
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   artifacts:
+#     when: on_failure
+#     paths:
+#       - msg.txt
+
+# report-outdated:
+#   stage: cabal-outdated
+#   script:
+#     # you can change 'libraries' to the channel dedicated to the library, if there is one
+#     # in order for a bot to be able to post messages, it must be added to the appropriate channel
+#     - 'nix develop .#ci -c curl -XPOST https://slack.com/api/chat.postMessage -H "Authorization: Bearer $SLACK_TOKEN" -d "channel=libraries" -d "text=$(cat ./msg.txt)"'
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   when: on_failure
+#   needs:
+#     - job: check-outdated
+#       artifacts: true
