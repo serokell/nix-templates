@@ -1,0 +1,33 @@
+on:
+  schedule:
+    # runs every Monday at 10:00 am UTC
+    - cron: '0 10 * * 1'
+
+jobs:
+  check-nightly:
+    # We use shared runners instead of our selfhosted ones because the stack integrates quite poorly with NixOS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: build with nightly
+        id: nightly
+        run: |
+          stack build --resolver nightly
+
+  report-failure:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: check-nightly
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Report build failure
+        env:
+          SLACK_TOKEN: ${{ env.SLACK_TOKEN }}
+          # you can change 'libraries' to the channel dedicated to the library, if there is one
+          # in order for a bot to be able to post messages, it must be added to the appropriate channel
+          SLACK_CHANNEL: "libraries"
+          MESSAGE: "Repository https://github.com/${{ github.repository }} failed to build with latest nightly resolver."
+        run: |
+          ./scripts/slack-send-message.sh

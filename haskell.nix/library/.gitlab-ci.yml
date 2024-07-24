@@ -7,6 +7,7 @@ stages:
   - build
   - test
   - cabal-outdated
+  - check-nightly
 
 xrefcheck:
   stage: validate
@@ -94,10 +95,40 @@ test:
 #   script:
 #     # you can change 'libraries' to the channel dedicated to the library, if there is one
 #     # in order for a bot to be able to post messages, it must be added to the appropriate channel
-#     - 'nix develop .#ci -c curl -XPOST https://slack.com/api/chat.postMessage -H "Authorization: Bearer $SLACK_TOKEN" -d "channel=libraries" -d "text=$(cat ./msg.txt)"'
+#     - export SLACK_CHANNEL=libraries
+#     - export MESSAGE=$(cat ./msg.txt)
+#     - 'nix develop .#ci -c ./scripts/slack-send-message.sh'
 #   rules:
 #     - if: $CI_PIPELINE_SOURCE == "schedule"
 #   when: on_failure
 #   needs:
 #     - job: check-outdated
 #       artifacts: true
+
+# #uncomment to run scheduled build against latest nightly resolver
+# check-nightly:
+#   # We use shared runners instead of our selfhosted ones because the stack integrates quite poorly with NixOS
+#   tags:
+#     - gitlab-org-docker
+#   image: haskell:latest
+#   stage: check-nightly
+#   script:
+#     - stack build --resolver nightly --install-ghc
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+
+# report-nightly-failure:
+#   tags:
+#     - gitlab-org
+#   stage: check-nightly
+#   script:
+#     # you can change 'libraries' to the channel dedicated to the library, if there is one
+#     # in order for a bot to be able to post messages, it must be added to the appropriate channel
+#     - export SLACK_CHANNEL=libraries
+#     - export MESSAGE="Repository https://gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME failed to build with latest nightly resolver."
+#     - ./scripts/slack-send-message.sh
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   when: on_failure
+#   needs:
+#     - job: check-nightly

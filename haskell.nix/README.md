@@ -21,7 +21,10 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
 
     3. If you're using `hpack` or `stack2cabal` in your project, make sure to uncomment the related lines in both `flake.nix` and pipeline configuration files. To avoid version mismatches, use `nix develop .#ci -c hpack` or `nix develop .#ci -c stack2cabal`.
 
-    4. You may want to add scheduled `cabal outdated` checks to be notified of new dependency versions. To do this for a GitHub repository, copy `.github/workflows/check-outdated.yml` to your library repository, and for a Gitlab repository, uncomment `check-outdated` and `report-outdated` in `.gitlab-ci.yml` and configure the schedule in the repository settings. In both cases, you need to provide the `SLACK_TOKEN` to the CI environment.
+    4. You may want to add scheduled `cabal outdated` or `stack build` against latest nigthly checks to be notified of new dependency versions. You need to provide a `SLACK_TOKEN` to your CI environment to report failures in the slack channel, please request one from the SRE team.
+         - Copy `./scripts/slack-send-message.sh` to your repository.
+         - For GitHub, copy `.github/workflows/check-outdated.yml` or `.github/workflows/check-nightly.yml` to your library repository.
+         - For Gitlab, configure the schedule in the repository settings and uncomment `check-outdated` and `report-outdated` or `check-nightly` and `report-nightly-failure` in `.gitlab-ci.yml`. For nightly checks, you will also need to enable gitlab hosted runners in the repository settings.
 
     5. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
 

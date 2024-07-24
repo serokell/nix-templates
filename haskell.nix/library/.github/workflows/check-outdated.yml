@@ -34,11 +34,10 @@ jobs:
 
       - name: Report outdated haskell dependencies
         env:
-          MSG: ${{needs.check-outdated.outputs.msg}}
-        run: |
+          SLACK_TOKEN: ${{ env.SLACK_TOKEN }}
           # you can change 'libraries' to the channel dedicated to the library, if there is one
           # in order for a bot to be able to post messages, it must be added to the appropriate channel
-          nix develop .#ci -c curl -XPOST https://slack.com/api/chat.postMessage \
-            -H "Authorization: Bearer ${{ env.SLACK_TOKEN }}" \
-            -d "channel=libraries" \
-            -d "text=$MSG"
+          SLACK_CHANNEL: "libraries"
+          MESSAGE: ${{needs.check-outdated.outputs.msg}}
+        run: |
+          ./scripts/slack-send-message.sh
