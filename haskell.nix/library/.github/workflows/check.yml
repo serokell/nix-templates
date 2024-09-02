@@ -1,5 +1,11 @@
 name: Nix flake check
-on: push
+on:
+  pull_request:
+  push:
+    # If your is default branch is 'main' delete the next line and uncomment the line following it
+    branches: master
+    # branches: main
+
 
 jobs:
   validate:
