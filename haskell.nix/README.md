@@ -26,7 +26,9 @@ Haskell application and library templates for Buildkite, Gitlab or GitHub CI usi
          - For GitHub, copy `.github/workflows/check-outdated.yml` or `.github/workflows/check-nightly.yml` to your library repository.
          - For Gitlab, configure the schedule in the repository settings and uncomment `check-outdated` and `report-outdated` or `check-nightly` and `report-nightly-failure` in `.gitlab-ci.yml`. For nightly checks, you will also need to enable gitlab hosted runners in the repository settings.
 
-    5. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
+    5. You might want to add a [`weeder`](https://github.com/ocharles/weeder/) check to check for dead code in your application. To do this uncomment the related lines in both `flake.nix` (do not forget to uncomment `writeHieFiles = true;`) and pipeline configuration files, then copy `weeder.toml` (for more advanced setup, please refer to the [corresponding section](https://github.com/ocharles/weeder/?tab=readme-ov-file#calling-weederUsually) of the `weeder` README) to your repository. For a library, code is usually considered dead unless it is exported; such cases are already detected by GHC warnings, so no `weeder` is required.
+
+    6. Make sure to clean up your `flake.nix` and pipeline configuration files by removing any optional code that is left commented out.
 
 - Enjoy working CI!
 

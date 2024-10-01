@@ -44,6 +44,10 @@ jobs:
       #   run: nix build -L .#checks.x86_64-linux.hpack
       #   if: success() || failure()
 
+      # - name: check-weeder
+      #   run: nix build -L .#checks.x86_64-linux.weeder
+      #   if: success() || failure()
+
   build:
     runs-on: [self-hosted, nix]
     steps:
