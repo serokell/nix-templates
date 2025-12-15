@@ -2,6 +2,8 @@
 
 This repository contains Nix and CI templates:
 
+- [generic](/generic/) - Generic template that contains common checks and CI setup for them (for GitHub Actions and Gitlab CI).
+
 - [/haskell.nix](/haskell.nix) — Haskell application and library templates for Buildkite, Gitlab or GitHub CI using `haskell.nix`
 
 - [/infra](/infra) — template for clusters with NixOS machines

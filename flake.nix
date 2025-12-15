@@ -39,7 +39,9 @@
         description = "Haskell library built and tested with different versions of ghc";
       };
 
+      generic = {
+        path = ./generic;
+        description = "A generic Nix flake with development shell and CI checks";
     };
-
   };
 }
