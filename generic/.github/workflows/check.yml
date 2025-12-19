@@ -1,0 +1,31 @@
+name: Nix flake check
+on:
+  pull_request:
+  push:
+    # If your is default branch is 'main' delete the next line and uncomment the line following it
+    branches: [master]
+    # branches: [main]
+
+
+jobs:
+  validate:
+    runs-on: [self-hosted, nix]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: xrefcheck
+        run: nix run github:serokell/xrefcheck
+
+      - name: reuse
+        run: nix build -L .#checks.x86_64-linux.reuse-lint
+        # Run step even if the previous one has failed
+        if: success() || failure()
+
+      - name: check-trailing-whitespace
+        run: nix build -L .#checks.x86_64-linux.trailing-whitespace
+        if: success() || failure()
+
+      # Uncomment in case your project sources contain bash scripts
+      # - name: shellcheck
+      #   run: nix build -L .#checks.x86_64-linux.shellcheck
+      #   if: success() || failure()

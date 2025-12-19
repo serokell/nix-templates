@@ -1,0 +1,27 @@
+default:
+  # specify nix tag to select runner
+  tags: [nix]
+
+stages:
+  - validate
+
+xrefcheck:
+  stage: validate
+  script:
+    - nix run github:serokell/xrefcheck
+
+reuse:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.reuse-lint
+
+check-trailing-whitespace:
+  stage: validate
+  script:
+    - nix build -L .#checks.x86_64-linux.trailing-whitespace
+
+# Uncomment in case your project sources contain bash scripts
+# shellcheck:
+#   stage: validate
+#   script:
+#     - nix build -L .#checks.x86_64-linux.shellcheck
