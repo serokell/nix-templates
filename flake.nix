@@ -42,6 +42,7 @@
       generic = {
         path = ./generic;
         description = "A generic Nix flake with development shell and CI checks";
+      };
     };
   };
 }
