@@ -1,0 +1,24 @@
+name: Nix flake check
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+
+jobs:
+  validate:
+    runs-on: [self-hosted, nix]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: xrefcheck
+        run: nix run github:serokell/xrefcheck
+
+      - name: reuse
+        run: nix build -L .#checks.x86_64-linux.reuse-lint
+        # Run step even if the previous one has failed
+        if: success() || failure()
+
+      - name: check-trailing-whitespace
+        run: nix build -L .#checks.x86_64-linux.trailing-whitespace
+        if: success() || failure()
