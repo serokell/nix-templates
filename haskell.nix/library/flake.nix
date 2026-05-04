@@ -58,7 +58,7 @@
             ];
           };
         };
-        
+
         # Uncomment if your project uses stack2cabal to generate cabal files
         # stack2cabal = haskellPkgs.haskell.lib.overrideCabal haskellPkgs.haskellPackages.stack2cabal
         # (drv: { jailbreak = true; broken = false; });

@@ -4,7 +4,7 @@
 
 <!-- # Constellation: Cluster Usage -->
 
-<!-- 
+<!--
 Put a constellation image here, from https://www.allthesky.com/constellations/visualconstellations.html
 
 Don't forget to add image credit:
