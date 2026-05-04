@@ -53,7 +53,7 @@ All necessary programs and dependencies are provided by Nix in `nix-shell` or `n
 ### Terraform
 
 Cloud hardware required to run this repository is described using Terraform.
-Terraform is an Infrastructure as Code tool from Hashicorp. Read more [here](https://www.terraform.io/).
+Terraform is an Infrastructure as Code tool from Hashicorp. Read more [here](https://developer.hashicorp.com/terraform).
 
 Terraform version that is used in this repo is pinned. Please use `nix-shell`
 or `nix develop` to get it.
