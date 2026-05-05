@@ -27,9 +27,6 @@ All necessary programs and dependencies are provided by Nix in `nix-shell` or `n
 - [./common.nix](./common.nix) provides common NixOS configuration defaults
   for all servers
 
-- [./modules](./modules) contains NixOS modules that aren't used outside
-  the repo but could still be reused some day
-
 - [./servers](./servers) contains NixOS server descriptions. Usually just
   imports a profile and changes the default values to specific ones
 
