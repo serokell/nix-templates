@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Serokell <https://serokell.io/>
+#
+# SPDX-License-Identifier: MPL-2.0
+
 on:
   schedule:
     # runs every Monday at 10:00 am UTC

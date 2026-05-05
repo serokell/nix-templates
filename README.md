@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Serokell <https://serokell.io/>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Nix and CI templates
 
 This repository contains Nix and CI templates:

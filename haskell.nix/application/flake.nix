@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Serokell <https://serokell.io/>
+#
+# SPDX-License-Identifier: MPL-2.0
+
 {
   nixConfig = {
     flake-registry = "https://github.com/serokell/flake-registry/raw/master/flake-registry.json";
