@@ -6,9 +6,7 @@ name: Nix flake check
 on:
   pull_request:
   push:
-    # If your is default branch is 'main' delete the next line and uncomment the line following it
     branches: [master]
-    # branches: [main]
 
 
 jobs:
@@ -28,8 +26,3 @@ jobs:
       - name: check-trailing-whitespace
         run: nix build -L .#checks.x86_64-linux.trailing-whitespace
         if: success() || failure()
-
-      # Uncomment in case your project sources contain bash scripts
-      # - name: shellcheck
-      #   run: nix build -L .#checks.x86_64-linux.shellcheck
-      #   if: success() || failure()

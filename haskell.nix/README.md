@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Serokell <https://serokell.io/>
+
+SPDX-License-Identifier: MPL-2.0
+-->
+
 Haskell application and library templates for Buildkite, Gitlab or GitHub CI using haskell.nix.
 ## How to use these templates
 

@@ -1,0 +1,5 @@
+version = 1
+SPDX-PackageName = "templates"
+SPDX-PackageSupplier = "Serokell <hi@serokell.io>"
+SPDX-PackageDownloadLocation = "https://github.com/serokell/nix-templates"
+annotations = []

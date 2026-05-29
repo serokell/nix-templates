@@ -4,7 +4,7 @@
 
 <!-- # Constellation: Cluster Usage -->
 
-<!-- 
+<!--
 Put a constellation image here, from https://www.allthesky.com/constellations/visualconstellations.html
 
 Don't forget to add image credit:
@@ -26,9 +26,6 @@ All necessary programs and dependencies are provided by Nix in `nix-shell` or `n
 
 - [./common.nix](./common.nix) provides common NixOS configuration defaults
   for all servers
-
-- [./modules](./modules) contains NixOS modules that aren't used outside
-  the repo but could still be reused some day
 
 - [./servers](./servers) contains NixOS server descriptions. Usually just
   imports a profile and changes the default values to specific ones
@@ -53,7 +50,7 @@ All necessary programs and dependencies are provided by Nix in `nix-shell` or `n
 ### Terraform
 
 Cloud hardware required to run this repository is described using Terraform.
-Terraform is an Infrastructure as Code tool from Hashicorp. Read more [here](https://www.terraform.io/).
+Terraform is an Infrastructure as Code tool from Hashicorp. Read more [here](https://developer.hashicorp.com/terraform).
 
 Terraform version that is used in this repo is pinned. Please use `nix-shell`
 or `nix develop` to get it.
